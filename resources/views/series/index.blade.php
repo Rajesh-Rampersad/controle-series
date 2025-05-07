@@ -1,7 +1,7 @@
 <x-layout title="Lista de Séries">
 
   <div class="d-flex justify-content-end mb-3">
-    <a href="/series/criar" class="btn btn-primary">Adiciona nova Série</a>
+    <a href="{{ route('series.create') }}" class="btn btn-primary">Adicionar nova Série</a>
   </div>
 
   <ul>
