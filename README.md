@@ -16,7 +16,7 @@ Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos, y emplea V
 
 ### 1. Clona el repositorio
 
-```bash
+
 git clone https://github.com/tu-usuario/tu-repo.git
 cd tu-repo
 
@@ -24,7 +24,7 @@ cd tu-repo
 ### 2. Levanta los contenedores
 
 docker compose up -d --build
----
+
 
 Esto iniciará los servicios:
 
