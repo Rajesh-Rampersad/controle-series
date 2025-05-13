@@ -34,10 +34,10 @@ postgres → Base de datos PostgreSQL
 
 nginx → Servidor web
 
-### 🧪 Acceder al contenedor Laravel
+# 🧪 Acceder al contenedor Laravel
 docker compose exec app bash
 
-### 🔧 Configuración de Laravel dentro del contenedor
+# 🔧 Configuración de Laravel dentro del contenedor
 Una vez dentro del contenedor:
 
 # Instala dependencias PHP
@@ -66,19 +66,19 @@ APP_URL=http://localhost:8000
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
-###  🧱 Ejecutar migraciones
+##  🧱 Ejecutar migraciones
 php artisan migrate
 
-### 🌐 Acceder a la aplicación Abre tu navegador en:
+## 🌐 Acceder a la aplicación Abre tu navegador en:
 http://localhost:8000
 
-### 🧹 Limpieza de cachés (opcional)
+## 🧹 Limpieza de cachés (opcional)
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
-### 🐘 Configuración de PostgreSQL Verifica que tu archivo .env tenga lo siguiente:
+## 🐘 Configuración de PostgreSQL Verifica que tu archivo .env tenga lo siguiente:
 DB_CONNECTION=pgsql
 DB_HOST=postgres
 DB_PORT=5432
@@ -87,7 +87,7 @@ DB_USERNAME=laravel
 DB_PASSWORD=secret
 
 
-### 📂 Estructura básica del proyecto
+## 📂 Estructura básica del proyecto
 .
 ├── app
 ├── bootstrap
@@ -102,7 +102,7 @@ DB_PASSWORD=secret
 ├── composer.json
 └── README.md
 
-### ✅ Comandos útiles
+## ✅ Comandos útiles
 # Ver el estado de los contenedores
 docker compose ps
 
@@ -113,5 +113,5 @@ docker compose exec app bash
 docker compose logs -f app
 
 
-### 📄 Licencia
+## 📄 Licencia
 MIT © [Tu Nombre o Usuario]
