@@ -1,6 +1,6 @@
-# 📦 Laravel + Docker + PostgreSQL
+# 📦 Laravel + Docker + PostgreSQL + Vite
 
-Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos. A continuación se detallan los pasos para levantar el entorno de desarrollo y ejecutar la aplicación desde cero.
+Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos, y emplea Vite para la gestión de activos front-end. A continuación se detallan los pasos para levantar el entorno de desarrollo y ejecutar la aplicación desde cero.
 
 ---
 
@@ -8,6 +8,7 @@ Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos. A continua
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- (Opcional) [pnpm](https://pnpm.io/) si deseas usarlo fuera del contenedor
 
 ---
 
@@ -18,98 +19,81 @@ Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos. A continua
 ```bash
 git clone https://github.com/tu-usuario/tu-repo.git
 cd tu-repo
-```
+
 
 ### 2. Levanta los contenedores
 
-```bash
-docker compose up -d
-```
-
-Esto iniciará los servicios `app` (Laravel) y `postgres`.
-
+docker compose up -d --build
 ---
 
-## 🧪 Acceder al contenedor Laravel
+Esto iniciará los servicios:
 
-```bash
+app → Contenedor de Laravel con PHP + Node + pnpm
+
+postgres → Base de datos PostgreSQL
+
+nginx → Servidor web
+
+### 🧪 Acceder al contenedor Laravel
 docker compose exec app bash
-```
 
----
+### 🔧 Configuración de Laravel dentro del contenedor
+Una vez dentro del contenedor:
 
-## 🛠️ Asignar permisos (solo la primera vez)
+# Instala dependencias PHP
+composer install
 
-Dentro del contenedor, otorga los permisos correctos a las carpetas necesarias:
+# Copia archivo de entorno
+cp .env.example .env
 
-```bash
+# Genera la clave de la app
+php artisan key:generate
+
+# Instala dependencias JS
+pnpm install
+
+# Compila los assets
+pnpm run build
+
+# Si prefieres usar Vite en modo desarrollo con recarga automática:
+pnpm run dev
+
+# Y asegúrate de tener en tu .env:
+VITE_HOST=0.0.0.0
+APP_URL=http://localhost:8000
+
+# 🛠️ Asignar permisos (solo la primera vez) Dentro del contenedor:
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
-```
 
----
-
-## 🧱 Ejecutar migraciones
-
-Aún dentro del contenedor:
-
-```bash
+###  🧱 Ejecutar migraciones
 php artisan migrate
-```
 
----
-
-## 🌐 Ejecutar servidor de desarrollo
-
-Desde el contenedor, ejecuta:
-
-```bash
-php artisan serve --host=0.0.0.0 --port=8000
-```
-
-Accede en tu navegador a:
-
-```
+### 🌐 Acceder a la aplicación Abre tu navegador en:
 http://localhost:8000
-```
 
----
-
-## 🧹 Limpieza de cachés (opcional)
-
-Si realizas cambios en configuración o rutas:
-
-```bash
+### 🧹 Limpieza de cachés (opcional)
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
-```
 
----
-
-## 🐘 Configuración de PostgreSQL
-
-Asegúrate de que tu archivo `.env` contiene lo siguiente:
-
-```env
+### 🐘 Configuración de PostgreSQL Verifica que tu archivo .env tenga lo siguiente:
 DB_CONNECTION=pgsql
 DB_HOST=postgres
 DB_PORT=5432
 DB_DATABASE=laravel
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-```
+DB_USERNAME=laravel
+DB_PASSWORD=secret
 
----
 
-## 📂 Estructura básica del proyecto
-
-```
+### 📂 Estructura básica del proyecto
 .
 ├── app
 ├── bootstrap
 ├── docker-compose.yml
+├── nginx/
+│   └── conf.d/
 ├── public
 ├── resources
 ├── routes
@@ -117,13 +101,8 @@ DB_PASSWORD=postgres
 ├── .env
 ├── composer.json
 └── README.md
-```
 
----
-
-## ✅ Comandos útiles
-
-```bash
+### ✅ Comandos útiles
 # Ver el estado de los contenedores
 docker compose ps
 
@@ -132,10 +111,7 @@ docker compose exec app bash
 
 # Ver logs del contenedor Laravel
 docker compose logs -f app
-```
 
----
 
-## 📄 Licencia
-
+### 📄 Licencia
 MIT © [Tu Nombre o Usuario]
