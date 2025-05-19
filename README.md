@@ -22,8 +22,10 @@ cd tu-repo
 
 
 ### 2. Levanta los contenedores
+# 🧪 Para desarrollo:
 
 docker compose up -d --build
+docker-compose up -d
 
 
 Esto iniciará los servicios:
@@ -35,7 +37,7 @@ postgres → Base de datos PostgreSQL
 nginx → Servidor web
 
 # 🧪 Acceder al contenedor Laravel
-docker compose exec app bash
+docker exec -it laravel_app bash  
 
 # 🔧 Configuración de Laravel dentro del contenedor
 Una vez dentro del contenedor:
@@ -56,7 +58,7 @@ pnpm install
 pnpm run build
 
 # Si prefieres usar Vite en modo desarrollo con recarga automática:
-pnpm run dev
+pnpm run dev -- --host
 
 # Y asegúrate de tener en tu .env:
 VITE_HOST=0.0.0.0
@@ -70,7 +72,7 @@ chmod -R 775 storage bootstrap/cache
 php artisan migrate
 
 ## 🌐 Acceder a la aplicación Abre tu navegador en:
-http://localhost:8000
+php artisan serve --host=0.0.0.0 --port=8000
 
 ## 🧹 Limpieza de cachés (opcional)
 php artisan config:clear
@@ -111,6 +113,55 @@ docker compose exec app bash
 
 # Ver logs del contenedor Laravel
 docker compose logs -f app
+
+
+## ✅  Build y Run
+
+# 🌐 Para producción:
+docker-compose -f docker-compose.prod.yml up -d --build
+
+Esto iniciará los servicios:
+
+app → Contenedor de Laravel con PHP + Node + pnpm
+
+postgres → Base de datos PostgreSQL
+
+nginx → Servidor web
+
+# Compila frontend localmente
+pnpm run build   # o npm run build
+
+# Genera clave APP_KEY si es necesario
+docker-compose -f docker-compose.prod.yml run --rm app php artisan key:generate --env=production
+
+# Crea el contenedor y levanta servicios
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# Corre migraciones
+docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+
+
+
+### ✅ Cómo usar
+# 🔧 Desarrollo:
+
+make up             # Levanta entorno de desarrollo
+make down           # Lo detiene
+make bash           # Entra al contenedor
+make migrate        # Ejecuta migraciones
+make key-generate   # Genera clave APP_KEY
+make artisan cmd=route:list
+make fix-perms    
+
+# 🚀 Producción:
+
+make prod-up        # Build y levantar producción
+make prod-down      # Apaga servicios producción
+make prod-bash      # Bash dentro del contenedor app prod
+make prod-migrate   # Migraciones en producción
+make prod-key       # Generar APP_KEY en producción
+make artisan cmd=route:list
+make fix-perms    
 
 
 ## 📄 Licencia

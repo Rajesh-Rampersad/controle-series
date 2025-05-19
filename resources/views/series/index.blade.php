@@ -1,23 +1,44 @@
 <x-layout title="Lista de Séries">
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="mb-0">Lista de Séries</h2>
-      <a href="{{ route('series.create') }}" class="btn btn-primary">Adicionar nova Série</a>
+  <div class="container py-4">
+
+    {{-- Mensagem de sucesso --}}
+    @if(session('mensagem.sucesso'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ session('mensagem.sucesso') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+    @endif
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3">📺 Lista de Séries</h1>
+      <a href="{{ route('series.create') }}" class="btn btn-success">
+        + Adicionar nova Série
+      </a>
     </div>
 
-    <ul class="list-group">
-      @forelse ($series as $serie)
+    @if($series->isEmpty())
+    <div class="alert alert-info text-center">
+      Nenhuma série cadastrada.
+    </div>
+    @else
+    <ul class="list-group shadow-sm">
+      @foreach ($series as $serie)
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ $serie->nome }}
-        <form action="{{ route('series.destroy', $serie->id) }}" method="POST" class="d-inline">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-        </form>
+        <span class="fw-medium">{{ $serie->nome }}</span>
+
+        <div class="btn-group" role="group" aria-label="Ações">
+          <a href="{{ route('series.edit', $serie->id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+
+          <form action="{{ route('series.destroy', $serie->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Tem certeza que deseja excluir esta série {{ $serie->nome }}?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+          </form>
+        </div>
       </li>
-      @empty
-      <li class="list-group-item text-muted">Nenhuma série cadastrada.</li>
-      @endforelse
+      @endforeach
     </ul>
+    @endif
+
   </div>
 </x-layout>

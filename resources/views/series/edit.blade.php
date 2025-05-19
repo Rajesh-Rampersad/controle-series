@@ -1,14 +1,18 @@
-<x-layout title="Nova Série">
+<x-layout title="Editar Série">
     <div class="container py-4">
 
-        <h1 class="h3 mb-4">🎬 Adicionar Nova Série</h1>
+        <h1 class="h3 mb-4">✏️ Editar Série</h1>
 
         <div class="card p-4 shadow-sm">
+            @if ($serie && $serie->exists)
             @include('components.series.form', [
-            'action' => route('series.store'),
-            'method' => null,
-            'serie' => null
+            'action' => route('series.update', ['serie' => $serie?->id]),
+            'method' => 'PUT',
+            'serie' => $serie
             ])
+            @else
+            <p class="text-danger">Erro: série não encontrada.</p>
+            @endif
         </div>
 
         @if ($errors->any())
