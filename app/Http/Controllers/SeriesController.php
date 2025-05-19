@@ -62,8 +62,7 @@ class SeriesController extends Controller
     }
     public function edit(Serie $serie)
     {
-
-
+        dd($serie->temporadas);
         return view('series.edit', compact('serie'));
     }
     public function update(SeriesFormRequest $request, Serie $serie)
