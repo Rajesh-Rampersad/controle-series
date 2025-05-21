@@ -21,10 +21,12 @@ class SeriesFormRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'nome' => 'required|string|min:3',
+            'nome' => 'required|string|max:255',
+            'seasonsQty' => 'required|integer|min:1',
+            'episodesPerSeason' => 'required|integer|min:1',
         ];
     }
 }

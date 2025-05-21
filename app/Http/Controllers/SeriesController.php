@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeriesFormRequest;
+use App\Models\Episode;
+use App\Models\Season;
 use App\Models\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,8 +27,8 @@ class SeriesController extends Controller
         //     ['nome' => 'The Mandalorian'],
         // ];
         // $series = DB::select('SELECT * FROM series');
-        $series = Serie::query()->orderBy('nome')->get(); // Alternativa usando o Query Builder
-        // $series = Serie::all(); // Alternativa usando Eloquent ORM
+        // $series = Serie::query()->orderBy('nome')->get(); // Alternativa usando o Query Builder
+        $series = Serie::all(); // Alternativa usando Eloquent ORM
         $mensagemSucesso = $request->session()->get('mensagem.sucesso');
 
 
@@ -41,7 +43,6 @@ class SeriesController extends Controller
 
     public function store(SeriesFormRequest $request)
     {
-
         // Verificar si ya existe una serie con el mismo nombre
         $serieExistente = Serie::where('nome', $request->input('nome'))->first();
 
@@ -54,7 +55,32 @@ class SeriesController extends Controller
         }
 
         // Si no existe, la crea
-        $serie = Serie::create($request->only('nome'));
+        $serie = Serie::create($request->all());
+        $seasons = [];
+
+        for ($i = 1; $i <= $request->seasonsQty; $i++) {
+            $seasons[] = [
+                'number' => $i,
+                'serie_id' => $serie->id,
+            ];
+        }
+        // Crear las temporadas
+        Season::insert($seasons);
+
+
+        $episodes = [];
+        foreach ($serie->seasons as $season) {
+            for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
+                $episodes[] = [
+                    'number' => $j,
+                    'season_id' => $season->id,
+                ];
+            }
+        }
+
+        // Crear los episodios
+        Episode::insert($episodes);
+
 
         // ✅ Mensagem de sucesso
 
@@ -62,7 +88,7 @@ class SeriesController extends Controller
     }
     public function edit(Serie $serie)
     {
-        dd($serie->temporadas);
+        dd($serie->seasons());
         return view('series.edit', compact('serie'));
     }
     public function update(SeriesFormRequest $request, Serie $serie)
