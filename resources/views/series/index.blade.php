@@ -24,7 +24,11 @@
     <ul class="list-group shadow-sm">
       @foreach ($series as $serie)
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="fw-medium">{{ $serie->nome }}</span>
+        <span class="fw-medium">
+          <a href="{{ route('seasons.index', $serie->id) }}">
+            {{ $serie->nome }}
+          </a>
+        </span>
 
         <div class="btn-group" role="group" aria-label="Ações">
           <a href="{{ route('series.edit', $serie->id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
