@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeriesFormRequest;
-use App\Models\Episode;
-use App\Models\Season;
+
 use App\Models\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,49 +42,39 @@ class SeriesController extends Controller
 
     public function store(SeriesFormRequest $request)
     {
-        // Verificar si ya existe una serie con el mismo nombre
+        // Prevenir duplicadas
         $serieExistente = Serie::where('nome', $request->input('nome'))->first();
-
         if ($serieExistente) {
-            // Redirigir con mensaje de error si ya existe
             return redirect()
                 ->back()
                 ->withInput()
                 ->withErrors(['nome' => 'Já existe uma série com esse nome.']);
         }
 
-        // Si no existe, la crea
-        $serie = Serie::create($request->all());
-        $seasons = [];
+        // Criar série
+        $serie = Serie::create([
+            'nome' => $request->input('nome'),
+        ]);
 
+        // Criar temporadas com episódios
         for ($i = 1; $i <= $request->seasonsQty; $i++) {
-            $seasons[] = [
-                'number' => $i,
-                'serie_id' => $serie->id,
-            ];
-        }
-        // Crear las temporadas
-        Season::insert($seasons);
+            $season = $serie->seasons()->create([
+                'number' => $i
+            ]);
 
-
-        $episodes = [];
-        foreach ($serie->seasons as $season) {
             for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
-                $episodes[] = [
-                    'number' => $j,
-                    'season_id' => $season->id,
-                ];
+                $season->episodes()->create([
+                    'number' => $j
+                ]);
             }
         }
 
-        // Crear los episodios
-        Episode::insert($episodes);
-
-
-        // ✅ Mensagem de sucesso
-
-        return to_route('series.index')->with('mensagem.sucesso', "Série '{$serie->nome}' cadastrada com sucesso.");
+        return to_route('series.index')
+            ->with('mensagem.sucesso', "Série '{$serie->nome}' cadastrada com sucesso.");
     }
+
+
+
     public function edit(Serie $serie)
     {
 

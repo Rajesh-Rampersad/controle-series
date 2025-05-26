@@ -21,12 +21,21 @@ class SeriesFormRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
             'nome' => 'required|string|max:255',
             'seasonsQty' => 'required|integer|min:1',
             'episodesPerSeason' => 'required|integer|min:1',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nome.required' => 'O nome da série é obrigatório.',
+            'seasonsQty.required' => 'Informe a quantidade de temporadas.',
+            'episodesPerSeason.required' => 'Informe a quantidade de episódios por temporada.',
         ];
     }
 }
