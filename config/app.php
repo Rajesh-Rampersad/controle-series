@@ -1,5 +1,6 @@
 <?php
 
+use App\Repositories\SeriesRepository;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -195,6 +196,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        App\Providers\SeriesRepositoryProvider::class, // Repositório de Séries        
 
 
 

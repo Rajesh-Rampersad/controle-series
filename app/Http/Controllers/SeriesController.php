@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SeriesFormRequest;
 
 use App\Models\Serie;
+use App\Repositories\EloquentSerieRepository;
+use App\Repositories\SeriesRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class SeriesController extends Controller
 {
+    public function __construct(private SeriesRepository $serieRepository) {}
     public function index(Request $request)
 
     {
@@ -42,35 +44,21 @@ class SeriesController extends Controller
 
     public function store(SeriesFormRequest $request)
     {
-        // Prevenir duplicadas
+        // Verificar si ya existe una serie con el mismo nombre
         $serieExistente = Serie::where('nome', $request->input('nome'))->first();
         if ($serieExistente) {
+            // Redirigir con mensaje de error si ya existe
             return redirect()
                 ->back()
                 ->withInput()
                 ->withErrors(['nome' => 'Já existe uma série com esse nome.']);
         }
+        // Usar o repositório para adicionar a série
+        $this->serieRepository->add($request);
 
-        // Criar série
-        $serie = Serie::create([
-            'nome' => $request->input('nome'),
-        ]);
-
-        // Criar temporadas com episódios
-        for ($i = 1; $i <= $request->seasonsQty; $i++) {
-            $season = $serie->seasons()->create([
-                'number' => $i
-            ]);
-
-            for ($j = 1; $j <= $request->episodesPerSeason; $j++) {
-                $season->episodes()->create([
-                    'number' => $j
-                ]);
-            }
-        }
-
+        // Redirecionar com mensagem de sucesso
         return to_route('series.index')
-            ->with('mensagem.sucesso', "Série '{$serie->nome}' cadastrada com sucesso.");
+            ->with('mensagem.sucesso', "Série '{$request->input('nome')}' cadastrada com sucesso.");
     }
 
 

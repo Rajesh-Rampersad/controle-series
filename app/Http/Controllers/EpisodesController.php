@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 
 class EpisodesController extends Controller
 {
-    public function index()
+    public function index(Season $season)
     {
         // Aquí puedes implementar la lógica para listar episodios
-        return view('episodes.index');
+        return view('episodes.index', [
+            'episodes' => $season->episodes
+        ]);
     }
 
     public function create(Season $season)
@@ -55,5 +57,18 @@ class EpisodesController extends Controller
         $episode->delete();
         return redirect()->route('seasons.index', $serieId)
             ->with('mensagem.sucesso', 'Episódio excluído com sucesso!');
+    }
+    public function markWatched(Request $request, $seasonId)
+    {
+        $episodesIds = $request->input('episodes', []);  // array de episodios marcados
+
+        $season = Season::with('episodes')->findOrFail($seasonId);
+
+        foreach ($season->episodes as $episode) {
+            $episode->watched = in_array($episode->id, $episodesIds);
+            $episode->save();
+        }
+
+        return redirect()->back()->with('success', 'Episódios atualizados com sucesso!');
     }
 }

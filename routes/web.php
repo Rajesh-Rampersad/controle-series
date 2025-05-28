@@ -4,6 +4,7 @@ use App\Http\Controllers\EpisodesController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\TesteController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,8 @@ Route::put('/seasons/{season}', [SeasonsController::class, 'update'])->name('sea
 Route::delete('/seasons/{season}', [SeasonsController::class, 'destroy'])->name('seasons.destroy');
 
 // Episodios CRUD
+Route::get('/seasons/{season}/episodes', [EpisodesController::class, 'index'])->name('episodes.index');
+Route::post('/seasons/{season}/episodes/mark-watched', [EpisodesController::class, 'markWatched'])->name('episodes.markWatched');
 Route::get('/seasons/{season}/episodes/create', [EpisodesController::class, 'create'])->name('episodes.create');
 Route::post('/seasons/{season}/episodes', [EpisodesController::class, 'store'])->name('episodes.store');
 Route::get('/episodes/{episode}/edit', [EpisodesController::class, 'edit'])->name('episodes.edit');

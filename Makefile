@@ -1,7 +1,7 @@
 # Variables generales
 APP=app
-DEV_COMPOSE=docker-compose
-PROD_COMPOSE=docker-compose -f docker-compose.prod.yml
+DEV_COMPOSE=docker compose
+PROD_COMPOSE=docker compose -f docker-compose.prod.yml
 
 # Contenedores Docker (Desarrollo)
 up:
@@ -17,7 +17,7 @@ logs:
 	$(DEV_COMPOSE) logs -f
 
 bash:
-	$(DEV_COMPOSE) exec app sh
+	$(DEV_COMPOSE) exec app sh || true
 
 
 # Contenedores Docker (Producción)

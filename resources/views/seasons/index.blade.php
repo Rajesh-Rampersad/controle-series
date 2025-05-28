@@ -36,21 +36,33 @@
                     @if($season->episodes->isEmpty())
                     <p class="text-muted">Sem episódios.</p>
                     @else
-                    <ul class="list-group">
-                        @foreach($season->episodes as $episode)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Episódio {{ $episode->number }}
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a href="{{ route('episodes.edit', $episode->id) }}" class="btn btn-outline-primary ms-2">✏️</a>
-                                <form action="{{ route('episodes.destroy', $episode->id) }}" method="POST" onsubmit="return confirm('Excluir este episódio?')" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger ms-1">🗑️</button>
-                                </form>
-                            </div>
-                        </li>
-                        @endforeach
-                    </ul>
+                    <form action="{{ route('episodes.markWatched', $season->id) }}" method="POST">
+                        @csrf
+                        <ul class="list-group">
+                            @foreach($season->episodes as $episode)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Episódio {{ $episode->number }}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="episodes[]"
+                                        value="{{ $episode->id }}" id="episode{{ $episode->id }}"
+                                        {{ $episode->watched ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="episode{{ $episode->id }}">
+                                        {{ $episode->watched ? 'Visto' : 'Não visto' }}
+                                    </label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ route('episodes.edit', $episode->id) }}" class="btn btn-outline-primary ms-2">✏️</a>
+                                    <form action="{{ route('episodes.destroy', $episode->id) }}" method="POST" onsubmit="return confirm('Excluir este episódio?')" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger ms-1">🗑️</button>
+                                    </form>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                        <button type="submit" class="btn btn-sm btn-primary mt-2">✅ Confirmar Episódios Vistos</button>
+                    </form>
                     @endif
                 </div>
             </div>
