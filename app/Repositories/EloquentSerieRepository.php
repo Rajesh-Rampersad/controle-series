@@ -10,8 +10,6 @@ class EloquentSerieRepository implements SeriesRepository
 {
     public function add(SeriesFormRequest $request): Serie
     {
-
-
         return DB::transaction(function () use ($request) {
             // Criar série
             $serie = Serie::create([
@@ -30,11 +28,9 @@ class EloquentSerieRepository implements SeriesRepository
                     ]);
                 }
             }
+
+            // ✅ Retorna a série criada
+            return $serie;
         });
-
-
-        // Redirecionar com mensagem de sucesso
-        return to_route('series.index')
-            ->with('mensagem.sucesso', "Série '{$serie->nome}' cadastrada com sucesso.");
     }
 }

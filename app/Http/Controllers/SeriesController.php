@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeriesFormRequest;
-
 use App\Models\Serie;
-use App\Repositories\EloquentSerieRepository;
 use App\Repositories\SeriesRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SeriesController extends Controller
 {
@@ -15,6 +14,7 @@ class SeriesController extends Controller
     public function index(Request $request)
 
     {
+
         // $series = [
         //     ['nome' => 'Game of Thrones'],
         //     ['nome' => 'Breaking Bad'],

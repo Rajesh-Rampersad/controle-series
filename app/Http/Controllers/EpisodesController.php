@@ -60,7 +60,13 @@ class EpisodesController extends Controller
     }
     public function markWatched(Request $request, $seasonId)
     {
-        $episodesIds = $request->input('episodes', []);  // array de episodios marcados
+
+        $request->validate([
+            'episodes' => 'array',
+            'episodes.*' => 'integer|exists:episodes,id',
+        ]);
+
+        $episodesIds = $request->input('episodes', []);
 
         $season = Season::with('episodes')->findOrFail($seasonId);
 
@@ -69,6 +75,6 @@ class EpisodesController extends Controller
             $episode->save();
         }
 
-        return redirect()->back()->with('success', 'Episódios atualizados com sucesso!');
+        return redirect()->back()->with('mensagem.sucesso', 'Episódios atualizados com sucesso!');
     }
 }

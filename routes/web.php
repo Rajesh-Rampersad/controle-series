@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\EpisodesController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\TesteController;
+use App\Http\Middleware\Autenticador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect('/series');
-});
+})->middleware(Autenticador::class);
 
 
 // Series CRUD
@@ -47,3 +49,8 @@ Route::post('/seasons/{season}/episodes', [EpisodesController::class, 'store'])-
 Route::get('/episodes/{episode}/edit', [EpisodesController::class, 'edit'])->name('episodes.edit');
 Route::put('/episodes/{episode}', [EpisodesController::class, 'update'])->name('episodes.update');
 Route::delete('/episodes/{episode}', [EpisodesController::class, 'destroy'])->name('episodes.destroy');
+
+// Login CRUD
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+Route::post('/logout', [LoginController::class, 'logout'])->name('login.logout');
