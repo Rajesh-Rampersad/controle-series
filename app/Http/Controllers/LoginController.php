@@ -11,25 +11,28 @@ class LoginController extends Controller
     {
         return view('login.index');
     }
+
     public function store(Request $request)
     {
-        // Lógica de autenticação do usuário
-        $credentials = $request->only('email', 'password');
+        $credenciais = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            // Autenticação bem-sucedida, redirecionar para a página inicial
-            return redirect()->intended('/series');
+        if (Auth::attempt($credenciais)) {
+            return redirect()->intended('/series')
+                ->with('mensagem.sucesso', 'Login realizado com sucesso!');
         }
 
-        // Falha na autenticação, redirecionar de volta com erro
-        return redirect()
-            ->back()
+        return redirect()->back()
             ->withInput()
-            ->withErrors(['email' => 'Credenciais inválidas.']);
+            ->withErrors([
+                'email' => 'E-mail ou senha inválidos.'
+            ]);
     }
+
     public function logout()
     {
         Auth::logout();
-        return redirect('/login')->with('mensagem.sucesso', 'Usuário deslogado com sucesso.');
+
+        return redirect('/login')
+            ->with('mensagem.sucesso', 'Logout realizado com sucesso!');
     }
 }

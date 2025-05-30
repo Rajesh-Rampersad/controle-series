@@ -4,80 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
     <title>{{ $title }}</title>
 
-    {{-- Vite (Laravel 9+) --}}
+    {{-- Laravel Vite Plugin (incluye Bootstrap desde SCSS y JS) --}}
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
-
-
-
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            margin-top: 50px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 20px;
-            background-color: white;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        li:hover {
-            background-color: #0056b3;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        .footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1>{{ $title }}</h1>
+<body class="bg-light">
 
+    {{-- Navbar de Bootstrap --}}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Lista de Séries</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login')}}">Entrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Séries</a>
+                    </li>
+
+                    <!--logout-->
+                    <li class="nav-item">
+                        <!--autenticacion -->
+                        @auth
+                        <a class="nav-link" href="{{ route('users.index') }}">Usuários</a>
+                        @endauth
+                    </li>
+                    <li class="nav-item">
+                        @auth
+                        <form id="logout-form" action="{{ route('login.logout')}}" method="POST">
+                            @csrf
+                            <button type="submit" class="nav-link">Sair</button>
+                        </form>
+                        @endauth
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {{-- Contenido principal --}}
+    <div class="container mt-5 p-4 bg-white shadow rounded" style="max-width: 600px;">
+        <h1 class="text-center mb-4">{{ $title }}</h1>
 
         {{ $slot }}
 
-        <div class="footer">
-            <p>&copy; 2023 Lista de Séries. Todos os direitos reservados.</p>
-            <p><a href="#">Voltar ao topo</a></p>
+        <div class="footer text-center mt-5">
+            <p class="mb-1">&copy; 2023 Lista de Séries. Todos os direitos reservados.</p>
+            <p><a href="#" class="text-primary text-decoration-none">Voltar ao topo</a></p>
         </div>
     </div>
+
 </body>
 
 </html>

@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\TesteController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\Autenticador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,3 +55,11 @@ Route::delete('/episodes/{episode}', [EpisodesController::class, 'destroy'])->na
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 Route::post('/logout', [LoginController::class, 'logout'])->name('login.logout');
+
+// USER CRUD
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/register', [UserController::class, 'create'])->name('users.create');
+Route::post('/register', [UserController::class, 'store'])->name('users.store');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');

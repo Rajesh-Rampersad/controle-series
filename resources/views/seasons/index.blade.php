@@ -31,6 +31,7 @@
             <div id="collapse{{ $season->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $season->id }}" data-bs-parent="#accordionSeasons">
                 <div class="accordion-body">
                     <div class="d-flex justify-content-end mb-3">
+                        @auth
                         <a href="{{ route('episodes.create', $season->id) }}" class="btn btn-sm btn-success me-2">+ Episódio</a>
                         <a href="{{ route('seasons.edit', $season->id) }}" class="btn btn-sm btn-primary me-2">✏️ Editar</a>
                         <form action="{{ route('seasons.destroy', $season->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta temporada?')" class="d-inline">
@@ -38,12 +39,14 @@
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger">🗑️ Excluir</button>
                         </form>
+                        @endauth
                     </div>
 
                     @if($season->episodes->isEmpty())
                     <p class="text-muted">Sem episódios.</p>
                     @else
                     {{-- ESTE ES EL FORMULARIO PRINCIPAL QUE AHORA FUNCIONARÁ --}}
+                    @auth
                     <form action="{{ route('episodes.markWatched', $season->id) }}" method="POST">
                         @csrf
                         <ul class="list-group">
@@ -58,6 +61,7 @@
                                         {!! $episode->watched ? '<span class="text-success">✅ Visto</span>' : '<span class="text-muted">❌ Não visto</span>' !!}
                                     </label>
                                 </div>
+                                @auth
                                 <div class="btn-group btn-group-sm" role="group">
                                     <a href="{{ route('episodes.edit', $episode->id) }}" class="btn btn-outline-primary ms-2">✏️</a>
 
@@ -70,11 +74,13 @@
                                         🗑️
                                     </button>
                                 </div>
+                                @endauth
                             </li>
                             @endforeach
                         </ul>
                         <button type="submit" class="btn btn-sm btn-primary mt-2">✅ Confirmar Episódios Vistos</button>
                     </form>
+                    @endauth
                     @endif
                 </div>
             </div>

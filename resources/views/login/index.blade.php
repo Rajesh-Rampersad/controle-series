@@ -1,59 +1,75 @@
 <x-layout title="Login">
     <x-slot name="header">
-        <h1 class="text-2xl font-bold">Login</h1>
+        <h1 class="h4 mb-4">Acessar Conta</h1>
     </x-slot>
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-4">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" id="email" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value="{{ old('email') }}">
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail</label>
+            <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control @error('email') is-invalid @enderror"
+                value="{{ old('email') }}"
+                required
+                autofocus>
             @error('email')
-            <span class="text-red-600 text-sm">{{ $message }}</span>
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
             @enderror
         </div>
 
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
-            <input type="password" name="password" id="password" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        <div class="mb-3">
+            <label for="password" class="form-label">Senha</label>
+            <input
+                type="password"
+                name="password"
+                id="password"
+                class="form-control @error('password') is-invalid @enderror"
+                required>
             @error('password')
-            <span class="text-red-600 text-sm">{{ $message }}</span>
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
             @enderror
         </div>
 
-        <div class="flex items-center justify-between">
-            <div class="flex items-center">
-                <input type="checkbox" name="remember" id="remember"
-                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                <label for="remember" class="ml-2 block text-sm text-gray-900">Remember me</label>
-            </div>
-            <div class="text-sm">
-                <a href="" class="font-medium text-indigo-600 hover:text-indigo-500">
-                    Forgot your password?
-                </a>
-            </div>
+        <div class="mb-3 form-check">
+            <input
+                type="checkbox"
+                name="remember"
+                id="remember"
+                class="form-check-input">
+            <label class="form-check-label" for="remember">
+                Lembrar-me
+            </label>
         </div>
-        <div>
-            <button type="submit"
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Enviar
-            </button>
+
+        <div class="d-flex justify-content-between mb-3">
+            <a href="#" class="link-primary">Esqueceu sua senha?</a>
         </div>
-        <div class="text-sm text-center">
-            <p>Don't have an account? <a href="" class="font-medium text-indigo-600 hover:text-indigo-500">Register</a></p>
+
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-box-arrow-in-right"></i> Entrar
+        </button>
+
+        <div class="text-center mt-3">
+            <p>
+                Não tem uma conta?
+                <a href="{{ route('users.create') }}" class="link-primary">Cadastre-se</a>
+            </p>
         </div>
     </form>
-
 </x-layout>
+
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const emailInput = document.getElementById('email');
-        emailInput.focus();
+        document.getElementById('email').focus();
     });
 </script>
 @endsection

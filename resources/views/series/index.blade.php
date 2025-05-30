@@ -11,9 +11,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="h3">📺 Lista de Séries</h1>
+      @auth
       <a href="{{ route('series.create') }}" class="btn btn-success">
         + Adicionar nova Série
       </a>
+      @endauth
     </div>
 
     @if($series->isEmpty())
