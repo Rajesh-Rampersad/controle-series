@@ -1,101 +1,147 @@
-# 📦 Laravel + Docker + PostgreSQL + Vite
+# 🚀 Laravel + Sail + PostgreSQL + Vite
 
-Este proyecto Laravel utiliza Docker y PostgreSQL como base de datos, y emplea Vite para la gestión de activos front-end. A continuación se detallan los pasos para levantar el entorno de desarrollo y ejecutar la aplicación desde cero.
+Este proyecto utiliza [Laravel Sail](https://laravel.com/docs/sail) como entorno de desarrollo basado en Docker, con PostgreSQL como base de datos y Vite para la compilación de activos frontend.
 
 ---
 
-## 🚀 Requisitos
+## 📋 Requisitos
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- (Opcional) [pnpm](https://pnpm.io/) si deseas usarlo fuera del contenedor
+- (Opcional) [pnpm](https://pnpm.io/) para manejo de dependencias JS fuera del contenedor
 
 ---
 
-## ⚙️ Configuración inicial
+## 🛠️ Configuración del entorno
 
-### 1. Clona el repositorio
+### 1️⃣ Clona el repositorio
 
-
+```bash
 git clone https://github.com/tu-usuario/tu-repo.git
 cd tu-repo
+```
 
+### 2️⃣ Copia el archivo de entorno
 
-### 2. Levanta los contenedores
-# 🧪 Para desarrollo:
+```bash
+cp .env.example .env
+```
 
-docker compose up -d --build
-docker-compose up -d
+### 3️⃣ Levanta los servicios con Sail
 
+```bash
+vendor/bin/sail up -d
+```
 
-Esto iniciará los servicios:
+Esto iniciará:
 
-app → Contenedor de Laravel con PHP + Node + pnpm
+- **Laravel App** (`PHP + Composer + Node.js + pnpm`)
+- **PostgreSQL** (`DB_HOST=pgsql`)
+- (Opcional) otros servicios definidos en `docker-compose.yml`
 
-postgres → Base de datos PostgreSQL
+---
 
-nginx → Servidor web
+## ⚙️ Configuración dentro del contenedor
 
-# 🧪 Acceder al contenedor Laravel
-docker exec -it laravel_app bash  
+Accede al contenedor Laravel:
 
-# 🔧 Configuración de Laravel dentro del contenedor
-Una vez dentro del contenedor:
+```bash
+vendor/bin/sail shell
+```
 
-# Instala dependencias PHP
+O, si prefieres:
+
+```bash
+vendor/bin/sail bash
+```
+
+### Comandos a ejecutar:
+
+```bash
+# Instalar dependencias PHP
 composer install
 
-# Copia archivo de entorno
-cp .env.example .env
-
-# Genera la clave de la app
+# Generar clave de aplicación
 php artisan key:generate
 
-# Instala dependencias JS
+# Instalar dependencias frontend
 pnpm install
 
-# Compila los assets
+# Compilar los assets para producción
 pnpm run build
 
-# Si prefieres usar Vite en modo desarrollo con recarga automática:
+# Alternativamente: modo desarrollo
 pnpm run dev -- --host
+```
 
-# Y asegúrate de tener en tu .env:
+**Asegúrate que en tu `.env` esté definido:**
+
+```env
+APP_URL=http://localhost
 VITE_HOST=0.0.0.0
-APP_URL=http://localhost:8000
+```
 
-# 🛠️ Asignar permisos (solo la primera vez) Dentro del contenedor:
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R 775 storage bootstrap/cache
+---
 
-##  🧱 Ejecutar migraciones
+## 🧱 Migraciones y configuración de permisos
+
+```bash
 php artisan migrate
 
-## 🌐 Acceder a la aplicación Abre tu navegador en:
-php artisan serve --host=0.0.0.0 --port=8000
+# Opcionalmente:
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+```
 
-## 🧹 Limpieza de cachés (opcional)
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+---
 
-## 🐘 Configuración de PostgreSQL Verifica que tu archivo .env tenga lo siguiente:
+## 🐘 Configuración PostgreSQL
+
+En tu `.env`:
+
+```env
 DB_CONNECTION=pgsql
-DB_HOST=postgres
+DB_HOST=pgsql
 DB_PORT=5432
 DB_DATABASE=laravel
 DB_USERNAME=laravel
 DB_PASSWORD=secret
+```
 
+---
 
-## 📂 Estructura básica del proyecto
+## 🔍 Comandos útiles con Sail
+
+```bash
+# Ver estado de los contenedores
+vendor/bin/sail ps
+
+# Acceder al contenedor Laravel
+vendor/bin/sail shell
+
+# Ver logs del contenedor
+vendor/bin/sail logs
+
+# Ejecutar comandos Artisan
+vendor/bin/sail artisan migrate
+vendor/bin/sail artisan route:list
+
+# Limpiar cachés
+vendor/bin/sail artisan config:clear
+vendor/bin/sail artisan cache:clear
+vendor/bin/sail artisan route:clear
+vendor/bin/sail artisan view:clear
+```
+
+---
+
+## 📂 Estructura del proyecto
+
+```
 .
 ├── app
 ├── bootstrap
 ├── docker-compose.yml
-├── nginx/
-│   └── conf.d/
 ├── public
 ├── resources
 ├── routes
@@ -103,66 +149,49 @@ DB_PASSWORD=secret
 ├── .env
 ├── composer.json
 └── README.md
+```
 
-## ✅ Comandos útiles
-# Ver el estado de los contenedores
-docker compose ps
+---
 
-# Acceder al contenedor Laravel
-docker compose exec app bash
+## ✅ Makefile (opcional)
 
-# Ver logs del contenedor Laravel
-docker compose logs -f app
+Si usas `make` para automatizar comandos, puedes incluir lo siguiente:
 
+```makefile
+up:           ## Levanta entorno de desarrollo
+	@vendor/bin/sail up -d
 
-## ✅  Build y Run
+down:         ## Apaga los contenedores
+	@vendor/bin/sail down
 
-# 🌐 Para producción:
-docker-compose -f docker-compose.prod.yml up -d --build
+bash:         ## Entra al contenedor Laravel
+	@vendor/bin/sail shell
 
-Esto iniciará los servicios:
+migrate:      ## Ejecuta migraciones
+	@vendor/bin/sail artisan migrate
 
-app → Contenedor de Laravel con PHP + Node + pnpm
+key-generate: ## Genera la clave de la app
+	@vendor/bin/sail artisan key:generate
 
-postgres → Base de datos PostgreSQL
+artisan:      ## Ejecuta comando artisan (uso: make artisan cmd=route:list)
+	@vendor/bin/sail artisan $(cmd)
 
-nginx → Servidor web
+fix-perms:    ## Corrige permisos
+	@vendor/bin/sail shell -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
+```
 
-# Compila frontend localmente
-pnpm run build   # o npm run build
+---
 
-# Genera clave APP_KEY si es necesario
-docker-compose -f docker-compose.prod.yml run --rm app php artisan key:generate --env=production
+## 🌐 Acceder a la aplicación
 
-# Crea el contenedor y levanta servicios
-docker-compose -f docker-compose.prod.yml up -d --build
+Una vez levantado el entorno, accede desde tu navegador a:
 
-# Corre migraciones
-docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+```
+http://localhost
+```
 
-
-
-### ✅ Cómo usar
-# 🔧 Desarrollo:
-
-make up             # Levanta entorno de desarrollo
-make down           # Lo detiene
-make bash           # Entra al contenedor
-make migrate        # Ejecuta migraciones
-make key-generate   # Genera clave APP_KEY
-make artisan cmd=route:list
-make fix-perms    
-
-# 🚀 Producción:
-
-make prod-up        # Build y levantar producción
-make prod-down      # Apaga servicios producción
-make prod-bash      # Bash dentro del contenedor app prod
-make prod-migrate   # Migraciones en producción
-make prod-key       # Generar APP_KEY en producción
-make artisan cmd=route:list
-make fix-perms    
-
+---
 
 ## 📄 Licencia
+
 MIT © [Tu Nombre o Usuario]
