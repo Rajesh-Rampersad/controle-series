@@ -16,8 +16,10 @@ class SeasonsController extends Controller
         return view('seasons.index', [
             'seasons' => $seasons,
             'serie' => $serie
+
         ]);
     }
+
     public function create(Serie $serie)
     {
         return view('seasons.create', compact('serie'));

@@ -31,6 +31,7 @@
             {{ $serie->nome }}
           </a>
         </span>
+        @auth
 
         <div class="btn-group" role="group" aria-label="Ações">
           <a href="{{ route('series.edit', $serie->id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
@@ -41,6 +42,7 @@
             <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
           </form>
         </div>
+        @endauth
       </li>
       @endforeach
     </ul>

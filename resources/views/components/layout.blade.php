@@ -15,7 +15,7 @@
     {{-- Navbar de Bootstrap --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">Lista de Séries</a>
+            <a class="navbar-brand" href="{{ route('series.index') }}">Lista de Séries</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNav" aria-controls="navbarNav"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@
                         <a class="nav-link" href="{{ route('login')}}">Entrar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Séries</a>
+                        <a class="nav-link" href="{{ route('series.index') }}">Séries</a>
                     </li>
 
                     <!--logout-->

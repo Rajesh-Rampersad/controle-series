@@ -3,7 +3,7 @@
         <h1 class="h4 mb-4">Editar Usuário</h1>
     </x-slot>
 
-    <form method="POST" action="{{ route('users.update', $id) }}">
+    <form method="POST" action="{{ route('users.update', $user->id) }}">
         @csrf
         @method('PUT')
 
