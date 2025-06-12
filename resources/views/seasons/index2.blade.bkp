@@ -1,0 +1,174 @@
+<x-layout title="📚 Temporadas de {{ $serie->nome }}">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-primary">Temporadas de {{ $serie->nome }}</h1>
+        @auth
+        <a href="{{ route('seasons.create', $serie->id) }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Adicionar Temporada
+        </a>
+        @endauth
+    </div>
+
+    @if(session('mensagem.sucesso'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('mensagem.sucesso') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
+    @if($seasons->isEmpty())
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> Nenhuma temporada cadastrada para esta série.
+    </div>
+    @else
+    <div class="accordion" id="accordionSeasons">
+        @foreach($seasons as $season)
+        <div class="accordion-item mb-3 shadow-sm border border-light rounded">
+            <h2 class="accordion-header" id="heading{{ $season->id }}">
+                <button class="accordion-button collapsed bg-light text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $season->id }}" aria-expanded="false" aria-controls="collapse{{ $season->id }}">
+                    Temporada {{ $season->number }}
+                </button>
+            </h2>
+
+            <div id="collapse{{ $season->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $season->id }}" data-bs-parent="#accordionSeasons">
+                <div class="accordion-body">
+                    <div class="d-flex justify-content-end mb-3">
+                        @auth
+                        <a href="{{ route('episodes.create', $season->id) }}" class="btn btn-sm btn-outline-success me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar Episódio">
+                            <i class="fas fa-plus"></i> Episódio
+                        </a>
+                        <a href="{{ route('seasons.edit', $season->id) }}" class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Temporada">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <form action="{{ route('seasons.destroy', $season->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta temporada?')" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir Temporada">
+                                <i class="fas fa-trash-alt"></i> Excluir
+                            </button>
+                        </form>
+                        @endauth
+                    </div>
+
+                    @if($season->episodes->isEmpty())
+                    <p class="text-muted text-center py-3">Sem episódios cadastrados para esta temporada.</p>
+                    @else
+                    <form action="{{ route('episodes.markWatched', $season->id) }}" method="POST">
+                        @csrf
+                        <ul class="list-group list-group-flush">
+                            @foreach($season->episodes as $episode)
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input" type="checkbox" name="episodes[]"
+                                            value="{{ $episode->id }}" id="episode{{ $episode->id }}"
+                                            {{ $episode->watched ? 'checked' : '' }}>
+                                        <label class="form-check-label text-muted" for="episode{{ $episode->id }}">
+                                            Episódio {{ $episode->number }}
+                                        </label>
+                                    </div>
+                                    <span class="{{ $episode->watched ? 'text-success' : 'text-muted' }}">
+                                        {!! $episode->watched ? '<i class="fas fa-check-circle me-1"></i> Visto' : '<i class="fas fa-times-circle me-1"></i> Não visto' !!}
+                                    </span>
+                                </div>
+
+                                @auth
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ route('episodes.edit', $episode->id) }}" class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Episódio">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button"
+                                        class="btn btn-outline-danger ms-1 delete-episode-btn"
+                                        data-episode-id="{{ $episode->id }}"
+                                        data-route="{{ route('episodes.destroy', $episode->id) }}"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir Episódio">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                                @endauth
+                            </li>
+                            @endforeach
+                        </ul>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="fas fa-save"></i> Confirmar Episódios Vistos
+                        </button>
+                    </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
+    <div class="mt-4">
+        <a href="{{ route('series.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para lista de séries
+        </a>
+    </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tooltips initialization
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+
+            // Episode deletion using Fetch API
+            document.querySelectorAll('.delete-episode-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const episodeId = this.dataset.episodeId;
+                    const deleteRoute = this.dataset.route;
+
+                    if (confirm('Tem certeza que deseja excluir este episódio?')) {
+                        fetch(deleteRoute, {
+                                method: 'POST', // Laravel uses POST with _method for DELETE
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}', // Laravel's CSRF token
+                                    'Content-Type': 'application/json',
+                                    'X-HTTP-Method-Override': 'DELETE' // Tells Laravel it's a DELETE request
+                                },
+                                body: JSON.stringify({}) // Empty body for DELETE request
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(error => {
+                                        throw new Error(error.message || 'Erro ao excluir o episódio.')
+                                    });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                alert(data.message || 'Episódio excluído com sucesso!');
+                                this.closest('li').remove(); // Visually remove the episode from the list
+                            })
+                            .catch(error => {
+                                alert('Erro: ' + error.message);
+                                console.error('Error:', error);
+                            });
+                    }
+                });
+            });
+
+            // Optional: Live update of watched status text (without form submission)
+            document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const label = this.nextElementSibling; // The label for the checkbox
+                    if (this.checked) {
+                        label.innerHTML = '<i class="fas fa-check-circle me-1"></i> Visto';
+                        label.classList.remove('text-muted');
+                        label.classList.add('text-success');
+                    } else {
+                        label.innerHTML = '<i class="fas fa-times-circle me-1"></i> Não visto';
+                        label.classList.remove('text-success');
+                        label.classList.add('text-muted');
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
+
+</x-layout>

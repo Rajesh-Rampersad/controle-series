@@ -63,10 +63,10 @@ class SeriesController extends Controller
 
 
 
-    public function edit(Serie $serie)
+    public function edit(Serie $series)
     {
 
-        return view('series.edit', compact('serie'));
+        return view('series.edit', compact('series'));
     }
     public function update(SeriesFormRequest $request, Serie $serie)
     {
@@ -89,11 +89,11 @@ class SeriesController extends Controller
 
         return to_route('series.index')->with('mensagem.sucesso', "Série '{$serie->nome}' atualizada com sucesso.");
     }
-    public function destroy(Serie $serie)
+    public function destroy(Serie $series)
     {
 
-        $serie->delete();
+        $series->delete();
 
-        return to_route('series.index')->with('mensagem.sucesso', "Série '{$serie->nome}' removida com sucesso.");
+        return to_route('series.index')->with('mensagem.sucesso', "Série '{$series->nome}' removida com sucesso.");
     }
 }

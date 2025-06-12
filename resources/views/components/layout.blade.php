@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
 
     {{-- Laravel Vite Plugin (incluye Bootstrap desde SCSS y JS) --}}
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
@@ -25,7 +28,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login')}}">Entrar</a>
+                        <a class="nav-link" href="{{ route('login.create') }}">Entrar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('series.index') }}">Séries</a>
@@ -40,10 +43,11 @@
                     </li>
                     <li class="nav-item">
                         @auth
-                        <form id="logout-form" action="{{ route('login.logout')}}" method="POST">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link">Sair</button>
                         </form>
+
                         @endauth
                     </li>
                 </ul>

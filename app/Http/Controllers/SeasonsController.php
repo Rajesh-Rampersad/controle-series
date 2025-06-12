@@ -53,6 +53,7 @@ class SeasonsController extends Controller
         return back()->with('mensagem.sucesso', 'Temporada atualizada com sucesso.');
     }
 
+
     public function destroy(Season $season)
     {
         $season->delete();

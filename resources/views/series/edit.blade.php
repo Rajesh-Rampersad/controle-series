@@ -4,14 +4,16 @@
         <h1 class="h3 mb-4">✏️ Editar Série</h1>
 
         <div class="card p-4 shadow-sm">
-            @if ($serie && $serie->exists)
+            @if ($series && $series->exists)
             @include('components.series.form', [
-            'action' => route('series.update', ['serie' => $serie?->id]),
+            'action' => route("series.update", $series->id),
             'method' => 'PUT',
-            'serie' => $serie
+            'serie' => $series
             ])
             @else
-            <p class="text-danger">Erro: série não encontrada.</p>
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Série não encontrada.
+            </div>
             @endif
         </div>
 
@@ -26,5 +28,10 @@
         </div>
         @endif
 
+    </div>
+    <div class="mt-4">
+        <a href="{{ route('series.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para lista de séries
+        </a>
     </div>
 </x-layout>

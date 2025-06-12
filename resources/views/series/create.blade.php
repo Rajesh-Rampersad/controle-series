@@ -23,4 +23,9 @@
         @endif
 
     </div>
+    <div class="mt-4">
+        <a href="{{ route('series.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para lista de séries
+        </a>
+    </div>
 </x-layout>
