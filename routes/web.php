@@ -30,5 +30,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Ruta de mail
+Route::get('/mail', function () {
+    return new \App\Mail\SeriesCreated(
+        nomeSerie: 'Breaking Bad',
+        qtdTemporadas: 5,
+        qtdEpisodios: 62,
+        idSerie: 1
+    );
+})->name('mail');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/app.php'; // NUEVO archivo donde irán tus rutas CRUD reales

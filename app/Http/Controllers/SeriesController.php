@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeriesFormRequest;
+use App\Mail\SeriesCreated;
 use App\Models\Serie;
+use App\Models\User;
 use App\Repositories\SeriesRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class SeriesController extends Controller
 {
@@ -55,6 +57,28 @@ class SeriesController extends Controller
         }
         // Usar o repositório para adicionar a série
         $this->serieRepository->add($request);
+
+        //Mail 
+        $email = new SeriesCreated(
+            nomeSerie: $request->input('nome'),
+            qtdTemporadas: $request->input('seasonsQty'),
+            qtdEpisodios: $request->input('episodesPerSeason'),
+            idSerie: Serie::latest()->first()->id // Obtém o ID da última série criada
+        );
+
+        // Enviar o email
+        $userList = User::all();
+        // Enviar o email para todos os usuários
+        foreach ($userList as $user) {
+            //Mail 
+            $email = new SeriesCreated(
+                nomeSerie: $request->input('nome'),
+                qtdTemporadas: $request->input('seasonsQty'),
+                qtdEpisodios: $request->input('episodesPerSeason'),
+                idSerie: Serie::latest()->first()->id // Obtém o ID da última série criada
+            );
+            Mail::to($user)->send($email);
+        }
 
         // Redirecionar com mensagem de sucesso
         return to_route('series.index')
