@@ -57,34 +57,19 @@ class SeriesController extends Controller
         }
         // Usar o repositório para adicionar a série
         $this->serieRepository->add($request);
-
-        //Mail 
-        $email = new SeriesCreated(
+        // Disparar o evento de série criada
+        $seriesCreatedEvent = new SeriesCreated(
             nomeSerie: $request->input('nome'),
             qtdTemporadas: $request->input('seasonsQty'),
             qtdEpisodios: $request->input('episodesPerSeason'),
             idSerie: Serie::latest()->first()->id // Obtém o ID da última série criada
         );
-
-        // Enviar o email
-        $userList = User::all();
-        // Enviar o email para todos os usuários
-        foreach ($userList as $user) {
-            //Mail 
-            $email = new SeriesCreated(
-                nomeSerie: $request->input('nome'),
-                qtdTemporadas: $request->input('seasonsQty'),
-                qtdEpisodios: $request->input('episodesPerSeason'),
-                idSerie: Serie::latest()->first()->id // Obtém o ID da última série criada
-            );
-            Mail::to($user)->send($email);
-        }
+        event($seriesCreatedEvent);
 
         // Redirecionar com mensagem de sucesso
         return to_route('series.index')
             ->with('mensagem.sucesso', "Série '{$request->input('nome')}' cadastrada com sucesso.");
     }
-
 
 
     public function edit(Serie $series)

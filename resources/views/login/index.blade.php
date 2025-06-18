@@ -1,7 +1,5 @@
 <x-layout title="Login">
-    <x-slot name="header">
-        <h1 class="h4 mb-4">Acessar Conta</h1>
-    </x-slot>
+
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
