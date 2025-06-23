@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Requests\SeriesFormRequest;
 use App\Models\Serie;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\SeriesRepository;
 
 class EloquentSerieRepository implements SeriesRepository
 {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,12 +33,14 @@ Route::middleware('auth')->group(function () {
 
 // Ruta de mail
 Route::get('/mail', function () {
-    return new \App\Mail\SeriesCreated(
+    $mail = new \App\Mail\SeriesCreated(
         nomeSerie: 'Breaking Bad',
         qtdTemporadas: 5,
         qtdEpisodios: 62,
         idSerie: 1
     );
+    Mail::to('ejemplo@mail.com')->send($mail);
+    return 'Email enviado correctamente';
 })->name('mail');
 
 require __DIR__ . '/auth.php';

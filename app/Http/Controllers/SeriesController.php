@@ -56,14 +56,15 @@ class SeriesController extends Controller
                 ->withErrors(['nome' => 'Já existe uma série com esse nome.']);
         }
         // Usar o repositório para adicionar a série
-        $this->serieRepository->add($request);
+        $serieCreada = $this->serieRepository->add($request);
         // Disparar o evento de série criada
         $seriesCreatedEvent = new SeriesCreated(
-            nomeSerie: $request->input('nome'),
+            nomeSerie: $serieCreada->nome,
             qtdTemporadas: $request->input('seasonsQty'),
             qtdEpisodios: $request->input('episodesPerSeason'),
-            idSerie: Serie::latest()->first()->id // Obtém o ID da última série criada
+            idSerie: $serieCreada->id
         );
+
         event($seriesCreatedEvent);
 
         // Redirecionar com mensagem de sucesso

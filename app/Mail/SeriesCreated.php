@@ -12,19 +12,23 @@ use Illuminate\Queue\SerializesModels;
 class SeriesCreated extends Mailable
 {
     use Queueable, SerializesModels;
+    public $nomeSerie;
+    public $qtdTemporadas;
+    public $qtdEpisodios;
+    public $idSerie;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(
-        public string $nomeSerie,
-        public int $qtdTemporadas,
-        public int $qtdEpisodios,
-        public int $idSerie
-    ) {
+    public function __construct($nomeSerie, $qtdTemporadas, $qtdEpisodios, $idSerie)
+    {
         // Aquí puedes inicializar cualquier otra propiedad o lógica necesaria
+        $this->nomeSerie = $nomeSerie;
+        $this->qtdTemporadas = $qtdTemporadas;
+        $this->qtdEpisodios = $qtdEpisodios;
+        $this->idSerie = $idSerie;
     }
 
     /**
