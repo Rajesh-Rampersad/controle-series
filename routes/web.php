@@ -42,6 +42,11 @@ Route::get('/mail', function () {
     Mail::to('ejemplo@mail.com')->send($mail);
     return 'Email enviado correctamente';
 })->name('mail');
+Route::get('/correo-prueba', function () {
+    $email = new \App\Mail\SeriesCreated('Test Manual', 2, 8, 99);
+    Mail::to('tu-correo@ejemplo.com')->send($email);
+    return 'Correo enviado manualmente';
+});
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/app.php'; // NUEVO archivo donde irán tus rutas CRUD reales

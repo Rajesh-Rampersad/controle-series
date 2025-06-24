@@ -8,6 +8,7 @@ use App\Models\Serie;
 use App\Models\User;
 use App\Repositories\SeriesRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SeriesController extends Controller
@@ -58,6 +59,14 @@ class SeriesController extends Controller
         // Usar o repositório para adicionar a série
         $serieCreada = $this->serieRepository->add($request);
         // Disparar o evento de série criada
+        Log::info('Serie creada - lanzando evento');
+        Log::info('Request:', $request->all());
+        Log::info('Serie creada:', [
+            'nome' => $serieCreada->nome,
+            'id' => $serieCreada->id,
+            'seasonsQty' => $request->input('seasonsQty'),
+            'episodesPerSeason' => $request->input('episodesPerSeason')
+        ]);
         $seriesCreatedEvent = new SeriesCreated(
             nomeSerie: $serieCreada->nome,
             qtdTemporadas: $request->input('seasonsQty'),

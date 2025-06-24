@@ -46,29 +46,29 @@ class EmailUserAboutSeriesCreated implements ShouldQueue
      */
     public function handle(EventsSeriesCreated $event)
     {
-
         Log::info('Enviando email para os usuários sobre a série criada: ' . $event->nomeSerie);
-        // Enviar o email
-        $userList = User::take(1)->get(); // Aqui você pode ajustar a quantidade de usuários que deseja enviar o email
+        $userList = User::take(1)->get(); // Para depurar, si en producción quieres todos, usa User::all();
         if ($userList->isEmpty()) {
             Log::warning('Nenhum usuário encontrado para enviar o email.');
             return;
         }
-        // Enviar o email para todos os usuários
+
+        $email = new SeriesCreated( // Instancia el Mailable una vez fuera del bucle
+            $event->nomeSerie,
+            $event->qtdTemporadas,
+            $event->qtdEpisodios,
+            $event->idSerie
+        );
+
         foreach ($userList as $user) {
-            //Mail 
-            $email = new SeriesCreated(
-                $event->nomeSerie,
-                $event->qtdTemporadas,
-                $event->qtdEpisodios,
-                $event->idSerie
-            );
             try {
-                Mail::to($user)->queue($email);
-                Log::info('Email enviado para: ' . $user->email);
+                // ⭐⭐ CAMBIO A ->queue() AQUÍ ⭐⭐
+                Mail::to($user)->queue($email); // Pone el email individual en la cola para envío
+                Log::info('Email para ' . $user->email . ' puesto en cola para la serie: ' . $event->nomeSerie);
             } catch (\Throwable $e) {
-                Log::error('Erro ao enviar email para ' . $user->email . ': ' . $e->getMessage());
+                Log::error('Erro ao colocar email em fila para ' . $user->email . ': ' . $e->getMessage());
             }
         }
+        Log::info('Todos os emails para a série ' . $event->nomeSerie . ' foram colocados na fila.');
     }
 }
